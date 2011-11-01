@@ -1,7 +1,7 @@
 // required knowledge:
 // jquery
-// processingjs
-// evently (jquery plugin)
+// processingjs(javascript only method) - processing.org/learning
+// evently(jquery plugin) - github.com/jchris/evently
 
 // console.log is a function that google chrome uses to display debug information in its javascript console 
 
@@ -28,8 +28,8 @@ $(document).ready(function() {
 
         $('#globalCanvas').evently({
             _init: function() {
-                $(this).data('canvasWidth',640);
-                $(this).data('canvasHeight',640);
+                $(this).data('canvasWidth',800);
+                $(this).data('canvasHeight',600);
             
                 console.log('_init');
                 gP = new Processing($('#globalCanvas')[0],gP);
@@ -45,7 +45,7 @@ $(document).ready(function() {
             draw: function() {
                 console.log('draw triggered');
                 // clear canvas
-                gP.background(0*16+11,0*16+9,0*16+11);
+                gP.background(0,0,0);
                 // redraw canvas
                 drawAllNodes();
             },
@@ -56,11 +56,19 @@ $(document).ready(function() {
             createnode: function() {
                 var myType = 'foo';
                 createNode(myType);
+            },
+            drag: function() {
+                detectNodeMouseDrag();
             }
         });
 });
 
 function gP(p) {
+    p.mouseDragged = function() {
+        $('#globalCanvas').trigger('drag');
+        $('#globalCanvas').trigger('requestdraw');
+    };
+
 	p.mouseMoved = function() {
         $('#globalCanvas').trigger('updatestates');
         $('#globalCanvas').trigger('requestdraw');
@@ -70,7 +78,8 @@ function gP(p) {
         $('#globalCanvas').trigger('createnode');
         $('#globalCanvas').trigger('requestdraw');
 	};
-    // p.setup has to complete before gP is accesible
+
+    // p.setup has to complete before gP(global processing object) is accesible
 	p.setup = function() {
         console.log('available fonts:'+p.PFont.list());
         p.size($('#globalCanvas').data('canvasWidth'),$('#globalCanvas').data('canvasHeight'));
